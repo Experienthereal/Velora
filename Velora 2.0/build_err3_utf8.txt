@@ -1,0 +1,126 @@
+﻿clang++ : installer\velor
+a_installer.cpp:20:9: war
+ning: 'UNICODE' macro red
+efined [-Wmacro-redefined
+]
+At line:1 char:1
++ clang++ -std=c++17 -O2 
+-DUNICODE -D_UNICODE -I c
+ompiler -I stdlib -I  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo       
+       : NotSpecified:   
+  (installer\velor...a   
+ cro-redefined]:Strin    
+g) [], RemoteExcepti    o
+n
+    + FullyQualifiedErro 
+   rId : NativeCommandE  
+  rror
+ 
+   20 | #define UNICODE
+      |         ^
+<command line>:1:9: note:
+ previous definition is h
+ere
+    1 | #define UNICODE 1
+      |         ^
+installer\velora_installe
+r.cpp:21:9: warning: '_UN
+ICODE' macro redefined [-
+Wmacro-redefined]
+   21 | #define _UNICODE
+      |         ^
+<command line>:2:9: note:
+ previous definition is h
+ere
+    2 | #define _UNICODE 
+1
+      |         ^
+In file included from ins
+taller\velora_installer.c
+pp:27:
+In file included from C:\
+Program Files (x86)\Micro
+soft Visual Studio\2022\B
+uildTools\VC\Tools\MSVC\1
+4.44.35207\include\string
+:8:
+C:\Program Files (x86)\Mi
+crosoft Visual Studio\202
+2\BuildTools\VC\Tools\MSV
+C\14.44.35207\include\yva
+ls_core.h:908:1: error: s
+tatic assertion failed: e
+rror STL1000: Unexpected 
+compiler version, expecte
+d Clang 19.0.0 or newer.
+  908 | _EMIT_STL_ERROR(S
+TL1000, "Unexpected compi
+ler version, expected Cla
+ng 19.0.0 or newer.");
+      | ^~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+C:\Program Files (x86)\Mi
+crosoft Visual Studio\202
+2\BuildTools\VC\Tools\MSV
+C\14.44.35207\include\yva
+ls_core.h:534:58: note: e
+xpanded from macro '_EMIT
+_STL_ERROR'
+  534 | #define _EMIT_STL
+_ERROR(NUMBER, MESSAGE)  
+ static_assert(false, "er
+ror " #NUMBER ": " MESSAG
+E)
+      |                  
+                         
+               ^~~~~
+2 warnings and 1 error ge
+nerated.
+In file included from ins
+taller\compiler_bridge.cp
+p:13:
+In file included from C:\
+Program Files (x86)\Micro
+soft Visual Studio\2022\B
+uildTools\VC\Tools\MSVC\1
+4.44.35207\include\string
+:8:
+C:\Program Files (x86)\Mi
+crosoft Visual Studio\202
+2\BuildTools\VC\Tools\MSV
+C\14.44.35207\include\yva
+ls_core.h:908:1: error: s
+tatic assertion failed: e
+rror STL1000: Unexpected 
+compiler version, expecte
+d Clang 19.0.0 or newer.
+  908 | _EMIT_STL_ERROR(S
+TL1000, "Unexpected compi
+ler version, expected Cla
+ng 19.0.0 or newer.");
+      | ^~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+C:\Program Files (x86)\Mi
+crosoft Visual Studio\202
+2\BuildTools\VC\Tools\MSV
+C\14.44.35207\include\yva
+ls_core.h:534:58: note: e
+xpanded from macro '_EMIT
+_STL_ERROR'
+  534 | #define _EMIT_STL
+_ERROR(NUMBER, MESSAGE)  
+ static_assert(false, "er
+ror " #NUMBER ": " MESSAG
+E)
+      |                  
+                         
+               ^~~~~
+1 error generated.

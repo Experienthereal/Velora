@@ -1,0 +1,36 @@
+// Veloragame demo — a simple game window
+
+Veloragame(backend = Auto, vsync = true):
+
+main:
+    window := create Window(title = "Velora Game Demo", width = 1280, height = 720)
+    renderer := window.getRenderer()
+
+    player := create Sprite("player.png")
+    player.position = Vector2(400, 300)
+
+    score := 0
+    running := true
+
+    game_loop:
+        while window.isOpen():
+            events := window.pollEvents()
+
+            for event in events:
+                if event.type == "quit":
+                    window.close()
+
+            // Player movement
+            if keyboard.isPressed("W"):
+                player.position.y -= 5
+            if keyboard.isPressed("S"):
+                player.position.y += 5
+            if keyboard.isPressed("A"):
+                player.position.x -= 5
+            if keyboard.isPressed("D"):
+                player.position.x += 5
+
+            // Render
+            renderer.clear(#1a1a2e)
+            renderer.draw(player)
+            renderer.present()

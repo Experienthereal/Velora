@@ -1,0 +1,5 @@
+// Hello World — the simplest Velora program
+
+main:
+    print("Hello from Velora!")
+    print("Welcome to the future of programming.")

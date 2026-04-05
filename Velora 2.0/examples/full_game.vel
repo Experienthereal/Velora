@@ -1,0 +1,132 @@
+// Full Veloragame demo — shows the entire engine in action.
+// Physics, UI, input, sprites, scene management, all in one file.
+
+Veloragame(backend = Auto, vsync = true):
+
+// Game constants
+WINDOW_W :: 1280
+WINDOW_H :: 720
+GRAVITY  :: 980.0
+PLAYER_SPEED :: 400.0
+JUMP_FORCE   :: -500.0
+
+// Player struct
+struct GameState:
+    score: int
+    lives: int
+    level: int
+
+main:
+    window   := create Window("Velora Game Engine Demo", WINDOW_W, WINDOW_H)
+    renderer := window.getRenderer()
+    physics  := create PhysicsWorld(gravity = GRAVITY)
+    ui       := create UIContext()
+
+    // Create player entity
+    player := create Entity("player")
+    player.position = Vector2(200, 400)
+    player.body := create RigidBody(mass = 70.0, gravity_scale = 1.0)
+    player.body.collider := BoxCollider(w = 40, h = 60)
+
+    // Create ground
+    ground := create Entity("ground")
+    ground.body := create RigidBody(mass = 0.0, is_static = true)
+    ground.body.position = Vector2(0, 660)
+    ground.body.collider := BoxCollider(w = 1280, h = 60)
+
+    // UI elements
+    score_label   := ui.label("score_lbl",   "Score: 0",     x = 20, y = 20, w = 200, h = 30)
+    lives_label   := ui.label("lives_lbl",   "Lives: 3",     x = 20, y = 55, w = 200, h = 30)
+    health_bar    := ui.progressbar("hp_bar", x = 20, y = 90, w = 200, h = 16, value = 1.0)
+    pause_button  := ui.button("pause_btn",  "PAUSE",        x = 1160, y = 20, w = 100, h = 36)
+
+    state := GameState()
+    state.score = 0
+    state.lives = 3
+    paused := false
+    player_hp := 1.0
+
+    game_loop:
+        while window.isOpen():
+
+            // Input
+            if keyboard.isJustPressed("Escape"):
+                window.close()
+
+            if keyboard.isJustPressed("P"):
+                paused = not paused
+
+            if pause_button.clicked:
+                paused = not paused
+
+            if not paused:
+                // Movement
+                if keyboard.isPressed("A") or keyboard.isPressed("Left"):
+                    player.body.velocity.x = -PLAYER_SPEED
+
+                elif keyboard.isPressed("D") or keyboard.isPressed("Right"):
+                    player.body.velocity.x = PLAYER_SPEED
+
+                else:
+                    player.body.velocity.x *= 0.8
+
+                // Jump
+                if keyboard.isJustPressed("Space") and player.body.on_ground:
+                    player.body.applyImpulse(Vector2(0, JUMP_FORCE))
+
+                // Physics step
+                physics.step()
+
+                // Keep player on screen
+                if player.position.x < 0:
+                    player.position.x = 0
+                    player.body.velocity.x = 0
+
+                if player.position.x > WINDOW_W - 40:
+                    player.position.x = WINDOW_W - 40
+                    player.body.velocity.x = 0
+
+                // Update score over time
+                state.score += 1
+
+                // Update UI
+                ui.set_text("score_lbl", f"Score: {state.score}")
+                ui.set_text("lives_lbl", f"Lives: {state.lives}")
+                ui.set_progress("hp_bar", player_hp)
+
+            // ─── Render ───
+            renderer.clear(#0f0f1a)
+
+            // Ground
+            renderer.draw_rect(0, 660, 1280, 60, color = #2d2d44)
+
+            // Player (solid rect as placeholder — replace with sprite)
+            renderer.draw_rect(
+                player.position.x,
+                player.position.y,
+                40, 60,
+                color = #4ecdc4
+            )
+
+            // Player shadow
+            renderer.draw_rect(
+                player.position.x + 4,
+                player.position.y + 62,
+                40, 6,
+                color = #0f0f1a
+            )
+
+            // Decorative background elements
+            renderer.draw_circle(200, 200, 60, color = #1a1a3e)
+            renderer.draw_circle(900, 350, 90, color = #1a1a3e)
+            renderer.draw_line(0, 655, 1280, 655, color = #5c5c8a, thickness = 2)
+
+            // Pause overlay
+            if paused:
+                renderer.draw_rect(0, 0, WINDOW_W, WINDOW_H, color = #00000088)
+                renderer.draw_text("PAUSED", x = 580, y = 340, color = #ffffff)
+
+            // Draw UI last (on top of everything)
+            ui.render()
+
+            renderer.present()
