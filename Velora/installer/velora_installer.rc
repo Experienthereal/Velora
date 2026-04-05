@@ -1,0 +1,37 @@
+// velora_installer.rc — Resource file
+// Embeds the UAC manifest and version info
+
+#include <windows.h>
+
+// UAC Manifest (ID 1 = application manifest)
+1 RT_MANIFEST "velora.manifest"
+
+// Version Information
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     0,1,0,0
+PRODUCTVERSION  0,1,0,0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Velora Language"
+            VALUE "FileDescription",  "Velora Programming Language Installer"
+            VALUE "FileVersion",      "0.1.0.0"
+            VALUE "InternalName",     "VeloraSetup"
+            VALUE "LegalCopyright",   "MIT License"
+            VALUE "OriginalFilename", "VeloraSetup.exe"
+            VALUE "ProductName",      "Velora Programming Language"
+            VALUE "ProductVersion",   "0.1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

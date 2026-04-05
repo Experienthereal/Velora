@@ -1,0 +1,47 @@
+// Variables, functions, and control flow demo
+
+func add(a: int, b: int) -> int:
+    return a + b
+
+func greet(name):
+    print(f"Hello, {name}!")
+
+main:
+    // Variables with type inference
+    score := 0
+    player_name := "Alex"
+    health: int = 100
+    alive := true
+
+    // Constants
+    MAX_SCORE :: 999999
+
+    greet(player_name)
+    print(f"Score: {score}")
+
+    // Math
+    result := add(10, 20)
+    print(f"10 + 20 = {result}")
+
+    // Control flow
+    if health > 50:
+        print("Player is healthy!")
+    elif health > 20:
+        print("Player needs healing.")
+    else:
+        print("Critical health!")
+
+    // Loops
+    for i in 0..5:
+        score += 100
+
+    print(f"Final score: {score}")
+
+    // Match statement
+    match score:
+        0:
+            print("No points")
+        500:
+            print("Five hundred!")
+        default:
+            print("Nice score!")

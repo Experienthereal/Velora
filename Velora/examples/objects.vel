@@ -1,0 +1,49 @@
+// Structs, classes, and traits demo
+
+struct Vector2:
+    x: double
+    y: double
+
+    func length() -> double:
+        return sqrt(x * x + y * y)
+
+trait Damageable:
+    func takeDamage(amount: int):
+        pass
+
+class Player:
+    position: Vector2
+    health: int
+    name: string
+
+    func takeDamage(dmg: int):
+        health -= dmg
+        if health <= 0:
+            print(f"{name} has been defeated!")
+
+    func heal(amount: int):
+        health += amount
+        if health > 100:
+            health = 100
+
+class Enemy:
+    position: Vector2
+    health: int
+    speed: double
+
+    func chase(target: Player):
+        // Move toward the player
+        print("Enemy is chasing!")
+
+main:
+    pos := Vector2(100.0, 200.0)
+    print(f"Position length: {pos.length()}")
+
+    player := create Player("Alex", health = 100)
+    enemy := create Enemy(health = 50, speed = 3.5)
+
+    player.takeDamage(25)
+    print(f"Player health: {player.health}")
+
+    player.heal(10)
+    print(f"After healing: {player.health}")

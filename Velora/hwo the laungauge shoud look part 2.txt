@@ -1,0 +1,78 @@
+Part 4: Python-Style Ease-of-Use Features (The Gemini Additions)
+
+These features ensure Velora is the most joyful and productive compiled language for game developers.
+
+1. String Interpolation (F-Strings)
+Instead of adding strings with `+`, use `f` prefixes to put variables directly into text.
+velora
+name := "Alex"
+hp := 100
+print(f"Player {name} has {hp} health points.")
+
+2. List & Dict Comprehensions
+Create new collections in a single, readable line.
+velora
+numbers := [1, 2, 3, 4, 5]
+squares := [n * n for n in numbers]          // [1, 4, 9, 16, 25]
+even_nums := [n for n in numbers if n % 2 == 0]
+
+enemies := get_enemies()
+enemy_names := [e.name for e in enemies]
+
+3. Multi-Variable Assignment (Destructuring)
+Assign values to multiple variables at once. Works with tuples, lists, and functions returning multiple values.
+velora
+func get_stats() -> (int, int, int):
+    return 100, 50, 10 // health, mana, stamina
+
+hp, mp, st := get_stats()
+
+// Swapping variables (no temporary variable needed)
+x, y := y, x
+
+4. The 'with' Statement (Resource Management)
+Automatically handles closing files, sockets, or database connections, even if an error occurs.
+velora
+with open("config.vlr", mode="r") as config:
+    content := config.readAll()
+// config is closed here automatically.
+
+5. "Truthy" and "Falsy" Values
+Makes if-statements cleaner when checking for empty collections or null values.
+velora
+enemies: list[Enemy] = get_nearby_enemies()
+
+if enemies: // Evaluates to true if list is not empty
+    attack(enemies[0])
+
+if player.weapon: // Evaluates to true if weapon is not null
+    player.weapon.fire()
+
+6. Smart Slicing
+Quickly get parts of a list or string using a simple range.
+velora
+nums := [0, 1, 2, 3, 4, 5]
+top_three := nums[..3]       // [0, 1, 2]
+middle := nums[1..4]        // [1, 2, 3]
+last_two := nums[-2..]      // [4, 5]
+
+7. Decorators
+Use @ syntax to wrap functions with extra behavior (like logging or timing loops).
+velora
+@log_execution
+func spawn_boss():
+    // Boss logic
+    pass
+
+8. Pattern Matching Guards
+Adding "Python-easy" logic to our powerful match statement.
+velora
+match score:
+    0..500 if level == 1:
+        print("Good start!")
+    500..1000 if level == 1:
+        print("Pro!")
+    default:
+        print("Playing hard...")
+
+These additions complete the 'joy of development' side of Velora.

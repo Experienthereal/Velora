@@ -1,0 +1,53 @@
+// Python-style features demo
+// F-strings, list comprehension, slicing, destructuring, decorators
+
+func get_stats() -> (int, int, int):
+    return 100, 50, 25
+
+@log_execution
+func process_enemies(enemies):
+    for enemy in enemies:
+        print(f"Processing {enemy}")
+
+main:
+    // F-strings
+    name := "Velora"
+    version := 1.0
+    print(f"Welcome to {name} v{version}!")
+
+    // List comprehension
+    numbers := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    squares := [n * n for n in numbers]
+    evens := [n for n in numbers if n % 2 == 0]
+
+    print(f"Squares count: {len(squares)}")
+
+    // Smart slicing
+    first_three := numbers[..3]
+    middle := numbers[3..7]
+    last_two := numbers[-2..]
+
+    // Destructuring
+    hp, mp, st := get_stats()
+    print(f"HP: {hp}, MP: {mp}, Stamina: {st}")
+
+    // Truthy/falsy
+    enemies := [1, 2, 3]
+    if enemies:
+        print("Enemies detected!")
+
+    // With statement
+    with open("config.txt", mode = "r") as config:
+        data := config.readAll()
+
+    // Match with guards
+    score := 750
+    match score:
+        0..100:
+            print("Beginner")
+        100..500 if hp > 50:
+            print("Intermediate")
+        500..1000:
+            print("Advanced")
+        default:
+            print("Master")

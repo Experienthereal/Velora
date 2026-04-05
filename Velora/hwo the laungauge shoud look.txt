@@ -1,0 +1,527 @@
+1. Core Philosophy of Velora
+
+Goal: "C++ speed + Python simplicity"
+Compiled language (not interpreted)
+Static typing by default, but with optional type inference (like Python feels)
+Human-friendly, readable syntax (less curly braces, more English-like flow)
+Built-in high-performance game development tools (Veloragame)
+Native support for DirectX, Vulkan, and OpenGL (you choose or it auto-detects)
+Fully open-source (we'll design it so the compiler and runtime are easy for others to contribute to)
+
+2. Basic Syntax Style (How code will look)
+Velora will feel very clean and modern:
+velora// This is how a simple program looks
+main:
+    print("Hello from Velora!")
+
+    player := create Player("Alex", health = 100)
+    player.move(10, 20)
+    
+    if player.health > 50:
+        print("Player is doing great!")
+    else:
+        print("Player needs healing")
+Key syntax decisions we're making:
+
+Use := for variable declaration with type inference (like Go or modern C++)
+Use : for blocks instead of curly braces {} (more Python-like, cleaner)
+No mandatory semicolons at the end of lines
+main: as the entry point (simple and clear)
+Indentation defines blocks (like Python)
+Keywords are short and natural: if, else, for, while, func, struct, class, etc.
+
+3. Variables in Velora
+Variables will be super flexible but safe:
+velora// Declaration with type inference (recommended)
+score := 0
+name := "Veloragame"
+position := Vector2(100.5, 200.3)
+alive := true
+
+// Explicit typing when you want it
+health: int = 100
+velocity: float = 5.5
+player_list: list[Player] = []
+
+// Constants (immutable)
+MAX_HEALTH :: 1000     // double colon for constants
+
+:= = declare and infer type
+:: = constant (can't be changed later)
+You can still write explicit types: var: type = value
+Everything is strongly typed at compile time for speed, but you rarely have to write the types.
+
+4. Functions
+velorafunc add(a: int, b: int) -> int:
+    return a + b
+
+// Or with inference (shorter)
+func greet(name):
+    print("Welcome to Velora, " + name + "!")
+
+-> for return type
+Can omit return type if it returns nothing (void)
+
+5. Veloragame — The Built-in Game Library
+This is the killer feature. Instead of importing pygame, you just use Veloragame: and everything for 2D/3D games is ready.
+Example of what game code will look like:
+veloraVeloragame:
+
+main:
+    window := create Window(title = "My Velora Game", width = 1280, height = 720)
+    renderer := window.getRenderer()   // supports Vulkan / DirectX / OpenGL automatically
+    
+    player := create Sprite("player.png")
+    player.position = Vector2(400, 300)
+    
+    game_loop:
+        while window.isOpen():
+            events := window.pollEvents()
+            
+            for event in events:
+                if event.type == "quit":
+                    window.close()
+            
+            // Simple movement
+            if keyboard.isPressed("W"):
+                player.position.y -= 5
+            
+            renderer.clear()
+            renderer.draw(player)
+            renderer.present()   // flip the frame
+Veloragame features we'll design:
+
+Veloragame: block to enable game mode (sets up rendering, input, audio, physics automatically)
+Built-in Window, Renderer, Sprite, Texture, Sound, Music, Font
+Automatic backend switching: you can force Vulkan, DirectX12, or OpenGL, or let it choose the best
+Simple vector math: Vector2, Vector3, Matrix4
+Easy input: keyboard, mouse, controller
+Built-in simple physics (collision, velocity, gravity)
+Scene system (like Godot scenes but lighter)
+UI system (buttons, text, panels) inside the same syntax
+
+6. Graphics Backend Support
+velora// At the top of your game file
+graphics_backend := Vulkan     // or DirectX, OpenGL, Auto
+
+Veloragame(backend = graphics_backend):
+    ...
+The compiler will include only the needed backend so the final executable stays small and fast.
+7. More Advanced (but still easy) Features
+We'll plan these too:
+
+Structs and Classes (with methods)
+Memory management: mostly automatic (smart pointers under the hood), but manual control when you need max speed
+Modules / packages (clean import system)
+Error handling: try: / catch: or result types (we'll decide what feels best)
+Multithreading made simple
+
+8. How "Human-like" the language will feel
+We want code to read almost like English when possible:
+veloraif player.isTouching(enemy):
+    player.takeDamage(25)
+    playSound("hit.wav")
+
+for enemy in enemies:
+    enemy.chase(player)
+No ugly boilerplate. No std:: everywhere. Clean and joyful to write.
+
+So, this is the big picture plan for Velora + Veloragame.
+
+
+
+
+part 2:1. Variables & Data Types — Full List and Rules
+Declaration styles (choose what feels natural):
+
+name := value → type inferred, mutable
+name: Type = value → explicit type
+NAME :: value → constant (immutable, compile-time where possible)
+name: Type → declare without init (must assign before use)
+
+Core primitive data types:
+
+int — whole numbers (32-bit default, but compiler can promote to 64-bit when needed)
+int8, int16, int32, int64 — fixed-size signed integers
+uint8, uint16, uint32, uint64 — unsigned
+float — 32-bit floating point
+double — 64-bit floating point (recommended default for calculations)
+bool — true / false
+char — single Unicode character
+string — immutable text (UTF-8)
+rawstring — for file paths or raw data (no escape sequences)
+
+Compound / container types:
+
+list[T] — dynamic array (like Python list)
+array[T, N] — fixed-size array (stack allocated for speed)
+dict[K, V] — hash map
+set[T] — unique items
+tuple[T1, T2, ...] — fixed heterogeneous values
+optional[T] — value that may be absent (like Rust Option or Python Optional)
+
+Game/math specific built-ins (always available):
+
+Vector2, Vector3, Vector4
+Matrix3, Matrix4
+Quaternion
+Color (with r, g, b, a)
+
+Rules:
+
+Strong static typing at compile time → catches errors early, enables optimizations.
+Heavy type inference so you rarely write types explicitly.
+Everything is value type by default (fast copies for small things). Use & or ref for references when you want sharing.
+Mutability is explicit: variables are mutable unless declared constant with ::.
+No implicit conversions between unrelated types (safety + speed).
+Strings are immutable by default → encourages safe code.
+
+Example feel:
+velorascore := 0                    // inferred int
+pi: double = 3.14159
+title := "Velora Quest"
+enemies: list[Enemy] = []
+max_score :: 999999           // constant
+pos := Vector2(100.0, 200.0)
+2. Control Flow (if, loops, match/switch)
+If / else (Python-style, no parentheses needed):
+veloraif health <= 0:
+    die()
+elif health < 30:
+    showLowHealthWarning()
+else:
+    continueFighting()
+Loops:
+
+while condition: — standard while
+for item in collection: — range-based (cleanest)
+for i in 0..10: — range syntax (inclusive start, exclusive end)
+for i, value in enumerate(list): — with index
+loop: — infinite loop (break when needed)
+
+No C-style for (init; cond; incr) — we keep it simple and readable.
+Match (powerful pattern matching, like Rust/Swift switch on steroids):
+veloramatch player.state:
+    Idle:
+        animateIdle()
+    Running(speed):
+        move(speed)
+    Attacking(target):
+        attack(target)
+    default:
+        print("Unknown state")
+Supports destructuring, guards, and ranges. Very expressive for game logic (states, events, input).
+3. Functions & Modules
+Functions:
+velorafunc heal(target: Player, amount: int) -> bool:
+    if target.health + amount > target.maxHealth:
+        target.health = target.maxHealth
+        return true
+    target.health += amount
+    return false
+
+// Short form when body is one expression
+func add(a, b) -> int = a + b
+
+func keyword
+Parameters can have default values: func spawn(x = 0, y = 0)
+Return type with -> Type (optional if void)
+Supports generics: func find[T](list: list[T], item: T)
+
+Modules / Packages:
+
+File = module by default
+module game.core at top of file for namespacing
+import game.core or from game.core import Player
+export keyword for public items (everything private by default for safety)
+Clean folder structure: src/game/ becomes game. module tree
+
+This keeps large games organized without heavy boilerplate.
+4. Object System (Structs vs Classes)
+Velora has two clear concepts for maximum performance + flexibility:
+Structs (value types — fast, stack-allocated by default):
+
+For pure data + lightweight behavior (positions, colors, simple components)
+Copied on assignment (unless you take reference)
+No inheritance, but supports composition and traits (interfaces)
+Perfect for game entities where cache performance matters
+
+Classes (reference types — heap-allocated, with identity):
+
+For complex objects that need polymorphism, inheritance, or shared mutable state (e.g. big managers, UI systems, networked players)
+Automatic reference counting + optional manual control for max speed
+Single inheritance + traits for behavior
+
+Traits (like interfaces/mixins):
+Define shared behavior that both structs and classes can implement.
+Example sketch:
+velorastruct Vector2:
+    x: double
+    y: double
+    
+    func length() -> double:
+        return sqrt(x*x + y*y)
+
+class Player:
+    position: Vector2
+    health: int
+    
+    func takeDamage(dmg):
+        health -= dmg
+        if health <= 0:
+            onDeath()
+Rule of thumb: Use struct unless you need reference semantics or deep inheritance.
+5. Veloragame — Full List of Built-in Objects & Methods
+Veloragame: is a special top-level block that activates the game runtime (sets up window, renderer, input, audio, timing automatically).
+Core objects:
+
+Window
+create Window(title, width, height, fullscreen=false)
+Methods: isOpen(), close(), pollEvents(), setTitle(), resize(), getRenderer()
+
+Renderer (abstracts Vulkan / DirectX / OpenGL)
+clear(color)
+draw(sprite or mesh)
+drawUI(element)
+present() (swap buffers)
+setViewport(), setCamera()
+Backend switch: Renderer(backend=Vulkan) or Auto
+
+Sprite (2D)
+create Sprite(texture or filename)
+Properties: position: Vector2, scale, rotation, color, visible
+Methods: flipX(), flipY(), playAnimation(name, loop)
+
+Texture
+Loading, filtering, mipmaps
+
+Mesh / Model (for 3D)
+Camera (2D/3D)
+follow(target), setPosition(), zoom
+
+Input
+keyboard.isPressed(key) / isJustPressed()
+mouse.position, mouse.buttons, mouse.wheel
+controller support (sticks, triggers, buttons)
+
+Sound / Music
+playSound(filename, volume, pitch)
+playMusic(), stopMusic(), fade()
+
+Font / Text
+create Text("Hello", font, size)
+Easy UI rendering
+
+UI System (built-in)
+Button, Panel, Label, Slider, InventorySlot etc.
+Layout: VBox, HBox, Grid
+
+Physics (simple built-in)
+Collider (box, circle, polygon)
+checkCollision(a, b)
+Basic velocity + gravity on sprites when enabled
+
+Scene / GameState
+switchScene(newScene)
+Easy scene management
+
+
+Veloragame code starts with:
+veloraVeloragame(backend=Auto, vsync=true):
+
+main:
+    window := create Window("My Game", 1280, 720)
+    ...
+It compiles only the chosen backend so executables stay lean and fast.
+
+New Combined Prompt for Velora (ready to copy-paste or expand)
+Here’s a clean, complete prompt you can use (or give to someone/AI) to continue building Velora. It includes everything we’ve designed so far + extras for completeness:
+"Design and fully specify the Velora programming language from scratch. Velora must be compiled and as fast as C++, but as easy and readable as Python. It is open-source friendly with clean, human-like syntax and minimal boilerplate.
+Core features:
+
+Variables: := for inference, :: for constants, explicit typing optional. Primitives: int, float/double, bool, string, char. Containers: list[T], array[T,N], dict, set. Math: Vector2/3/4, Matrix, Color.
+Control flow: if/elif/else with :, for item in collection, for i in 0..n, while, powerful match with patterns.
+Functions: func keyword, type inference, generics, default params.
+Modules: import/from, export, folder-based.
+Object system: Structs (value types, fast), Classes (reference types), Traits for shared behavior. Composition preferred over deep inheritance.
+Veloragame: Built-in high-performance game framework. Activate with Veloragame(backend=Vulkan|DirectX|OpenGL|Auto). Includes Window, Renderer, Sprite, Texture, Mesh, Camera, Input (keyboard/mouse/controller), Sound/Music, Font/Text, UI elements, simple physics, Scene management. Supports 2D and 3D. Renderer abstracts backends for easy switching.
+
+Additional requirements:
+
+Strong static typing with excellent inference.
+Memory: mostly automatic (ref counting + escape analysis), manual opt-in for max performance.
+Error handling: try/catch + Result type option.
+Make syntax clean, English-like, indentation-based blocks.
+Keep game development joyful and fast — no heavy setup for basic 2D/3D games.
+Provide full syntax examples for all features.
+
+Now expand on: [add whatever you want next — e.g. error handling, generics, build system, standard library, etc.]"
+
+We now have a solid foundation!
+
+
+part 3:6. Standard Library (std)
+Velora’s standard library (std) is batteries-included but lightweight by default. It focuses on:
+
+High performance (zero-cost abstractions where possible)
+Safety (no undefined behavior)
+Simplicity (intuitive names, good defaults)
+Game-friendly utilities
+
+You access it with import std or from std import ... (or qualified as std.math, etc.). Many things are auto-available in Veloragame: mode.
+Math (std.math)
+Designed for games: fast vectors, trigonometry, random, etc. Built on top of the primitives we already defined (Vector2, Vector3, etc.).
+Key modules and functions:
+
+Basic: sin, cos, tan, asin, acos, atan2, sqrt, pow, log, exp, abs, floor, ceil, round, clamp(value, min, max)
+Constants: PI, TAU, E, DEG_TO_RAD, RAD_TO_DEG
+Random: random() (0.0–1.0), randint(min, max), choice(list), shuffle(list), seeded generators
+Vector / Matrix helpers:
+Vector2.dot(a, b), Vector2.distance(a, b), Vector2.lerp(a, b, t)
+Matrix4.lookAt(eye, target, up), Matrix4.perspective(fov, aspect, near, far)
+Quaternion operations (slerp, fromEuler, etc.)
+
+Geometry: intersect(line1, line2), pointInCircle, pointInRect
+Advanced (opt-in): std.math.stats for mean/median, std.math.noise (Perlin, Simplex for procedural generation)
+
+Example:
+veloraimport std.math
+
+angle := 45.0
+radians := angle * std.math.DEG_TO_RAD
+dist := std.math.Vector2.distance(player.pos, enemy.pos)
+
+if dist < 50.0:
+    player.attack(enemy)
+Files / I/O (std.fs and std.io)
+Simple, safe, and fast. Async options available for networking-heavy games.
+
+std.fs.readFile(path) -> string or readBytes(path) -> array[uint8]
+std.fs.writeFile(path, content)
+std.fs.exists(path), delete(path), listDir(path) -> list[string]
+std.fs.File class for streaming: open(path, mode="r"), readLine(), write(), close()
+Path helpers: join, dirname, extension, absolute
+Binary support with rawstring or byte arrays
+
+Error handling uses Result[T, Error] by default (we’ll detail error handling later if you want).
+Example:
+velorasaveData := std.fs.readFile("save.json")
+if saveData != "":
+    player.loadFromJSON(saveData)
+Networking (std.net)
+Modern, async-first but with simple blocking APIs for beginners. Great for multiplayer games, leaderboards, asset downloading.
+
+std.net.TcpSocket, UdpSocket
+std.net.HttpClient (GET, POST, JSON helpers)
+std.net.WebSocket (for real-time games)
+Async support with async / await (planned keyword, lightweight coroutines under the hood for speed)
+Built-in JSON (std.json.encode/decode)
+High-level: std.net.downloadFile(url, path) for easy asset loading
+
+Example (simple multiplayer ping):
+veloraclient := std.net.TcpSocket.connect("game.server.com", 8080)
+client.send("ping")
+response := client.receive()
+All networking is non-blocking by default in game loops to keep FPS smooth. Veloragame integrates it nicely (e.g., automatic asset streaming).
+Other useful std modules we’ll include:
+
+std.time (Timer, DeltaTime — crucial for games: delta := std.time.delta())
+std.thread (simple threads + channels, with safe defaults)
+std.crypto (hashing, random secure)
+std.log (debug, info, error with levels)
+std.test (built-in testing framework)
+
+The std is designed so most game code only needs import std.math + Veloragame: for 80% of cases.
+7. Build System & Package Manager
+Velora needs a single, delightful tool like Rust’s Cargo — not separate makefiles or complex setups. We call it Velora (or just velora CLI).
+Core Philosophy
+
+One command does almost everything.
+Zero-config for simple projects.
+TOML-based manifest (velora.toml) — human readable, like Cargo.toml.
+Built-in dependency management, building, testing, running, packaging.
+Fast incremental compilation (leverages the compiled nature of Velora).
+Cross-platform by default (Windows, Linux, macOS — with easy Vulkan/DirectX/OpenGL switching).
+Open-source friendly: easy to contribute to the tool itself.
+
+Project Structure (created by velora new mygame)
+textmygame/
+├── velora.toml          # manifest
+├── src/
+│   └── main.vel         # entry point
+├── assets/              # images, sounds, etc. (auto-copied on build)
+├── tests/
+└── velora.lock          # locked dependencies (like Cargo.lock)
+velora.toml Example
+toml[package]
+name = "veloraquest"
+version = "0.1.0"
+authors = ["You <you@example.com>"]
+edition = "2026"   # language version for compatibility
+
+[dependencies]
+# Local or remote
+"std" = "builtin"   # always available
+"velora-ui" = { version = "1.2", source = "velora-registry" }
+"mymathlib" = { path = "../mymathlib" }   # local
+
+[veloragame]
+backend = "Auto"    # or "Vulkan", "DirectX", "OpenGL"
+vsync = true
+Main CLI Commands
+
+velora new mygame — creates project
+velora build — compiles to fast native executable (release mode optimizes aggressively)
+velora run — build + run (hot-reload support planned for development)
+velora test — runs tests in tests/ folder
+velora add velora-ui — adds dependency
+velora update — updates dependencies
+velora publish — publishes to Velora registry (central open-source repo)
+velora clean — clears build artifacts
+velora doc — generates documentation from comments
+
+Dependency Resolution:
+
+Semantic versioning (semver)
+Lockfile ensures reproducible builds
+Registry at velora.dev (community crates/packages)
+Supports local paths, git repos, and version ranges
+
+Build Features:
+
+Automatic backend selection for Veloragame
+Asset pipeline (compress images, convert sounds on build)
+Release builds strip debug info and enable max optimizations (C++-level speed)
+Easy cross-compilation (e.g., build Windows exe from Linux)
+
+This makes creating, sharing, and running Velora games feel effortless — perfect for indie devs and open-source contributors.
+
+Updated Combined Prompt for Velora (copy-paste ready)
+"Design and fully specify the Velora programming language from scratch. It must be compiled and perform like C++ (fast native code, optimizations), while feeling as easy and readable as Python (clean syntax, indentation-based blocks, minimal boilerplate, excellent type inference).
+Include all previous decisions:
+
+Variables: := inference, :: constants, explicit optional. Primitives + containers + Vector2/3/4 etc.
+Control flow: if/elif, for in, while, powerful match.
+Functions: func, generics, defaults.
+Modules: import/export, folder-based.
+Objects: Structs (value, fast), Classes (reference), Traits.
+Veloragame: special block with Window, Renderer (Vulkan/DirectX/OpenGL/Auto), Sprite, Input, Sound, UI, simple physics, scenes.
+
+Now expand with:
+
+Standard library: std.math (vectors, trig, random, geometry), std.fs (file read/write), std.io, std.net (sockets, http, websocket, json), std.time (delta time), plus others like thread, log, json. Keep it game-friendly and lightweight.
+Build system and package manager: Call the tool 'velora'. Use velora.toml (TOML format). Commands: new, build, run, test, add, update, publish. Support dependencies (local/git/registry), lockfile, asset handling, cross-compilation. Make it as smooth as Cargo.
+
+Additional requirements:
+
+Strong static typing with inference.
+Mostly automatic memory (ref counting + optimizations), manual control optional.
+Error handling with Result or try/catch.
+Syntax remains clean, English-like, joyful for game development.
+Focus on 2D/3D games being quick to prototype yet production-fast.
+
+Provide full syntax examples for the new parts (std and build system). Suggest next areas to design: error handling, async, generics/traits details, or standard library extensions."
+
+We now have a very solid, cohesive design for Velora + Veloragame + tooling!
+
+gemini if you wanna add to the laungauge more python easy like things! :)
